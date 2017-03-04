@@ -1,0 +1,6 @@
+[submodule "cmake-modules-sonar"]
+	path = cmake-modules-sonar
+	url = https://github.com/timothyolt/cmake-modules-sonar.git
+[submodule "connectR_tests/lib/googletest"]
+	path = connectR_tests/lib/googletest
+	url = https://github.com/google/googletest.git
