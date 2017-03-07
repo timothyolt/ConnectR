@@ -1,7 +1,7 @@
-// Copyright 2017 timothyolt.
+// Copyright 2017 Timothy Oltjenbruns.
 
-#ifndef CONNECTR_BOARDSIZE_HPP
-#define CONNECTR_BOARDSIZE_HPP
+#ifndef CONNECTR_INTERFACE_BOARDSIZE_HPP_
+#define CONNECTR_INTERFACE_BOARDSIZE_HPP_
 
 namespace cr {
 /// \brief Namespace for standard connectR interfaces
@@ -46,4 +46,4 @@ struct BoardSize {
 }
 }
 
-#endif //CONNECTR_BOARDSIZE_HPP
+#endif // CONNECTR_INTERFACE_BOARDSIZE_HPP_

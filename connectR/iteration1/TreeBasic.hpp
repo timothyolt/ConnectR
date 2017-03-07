@@ -39,11 +39,11 @@ class TreeBasic : public interface::ITree<TreeBasic, Board2D> {
 
   void setData(Board2D data);
 
+  node_type &operator[](long index) override;
+
   const std::vector<node_type> &getChildren() const;
 
   void setChildren(const std::vector<node_type> &children);
-
-  node_type &operator[](long index) override;
 };
 
 }  // namespace iteration1

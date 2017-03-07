@@ -10,18 +10,19 @@ namespace cr {
 /// \brief Namespace for standard connectR interfaces
 namespace interface {
 
-template <typename TBoard, typename TTree, typename THeuristic>
+template <typename TBoard, typename TTree>
 class ISolver {
  public:
   typedef TBoard board_type;
   typedef TTree tree_type;
-  typedef THeuristic heuristic_type;
  private:
   TBoard start;
   TTree tree;
   bool player;
- public:
+ protected:
+  ISolver() : start(), tree(), player(false) {}
   ISolver(TBoard start, bool player) : start(start), tree(tree_type()), player(player) { };
+ public:
 
   virtual board_type::size_type solve() = 0;
 };

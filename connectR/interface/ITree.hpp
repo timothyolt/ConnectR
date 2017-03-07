@@ -19,6 +19,8 @@ class ITree {
   typedef TData data_type;
 
  public:
+  const data_type::size_type getSize() const { return getData().getSize().getWidth(); }
+
   virtual const node_type* getParent() const = 0;
 
   virtual node_type* getParent() = 0;
