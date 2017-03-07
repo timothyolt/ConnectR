@@ -51,6 +51,9 @@ node_type &TreeBasic::operator[](long index) {
   return children[index];
 }
 
+const node_type &TreeBasic::operator[](long index) const {
+  return children[index];
+}
 
 void TreeBasic::setData(Board2D data) {
   TreeBasic::data = data;

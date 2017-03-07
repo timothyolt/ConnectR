@@ -9,27 +9,30 @@
 
 namespace cr {
 namespace Helpers {
+
+template <typename TTree>
 class TreeNodeIndex {
  public:
-  const interface::ITree *pointer;
-  std::vector<interface::ITree>::size_type index;
-  TreeNodeIndex(const interface::ITree *pointer, std::vector<interface::ITree>::size_type index);
+  const TTree *pointer;
+  typename std::vector<TTree>::size_type index;
+  TreeNodeIndex(const TTree *pointer, typename std::vector<TTree>::size_type index)
+      : pointer(pointer), index(index) { }
 };
 }
 
 /// \brief            Depth-First Search using a Functional to evaluate the node
 /// \param evaluate  Functional used to evaluate the node
 /// \return           Const-pointer to first node matching the functional, or nullptr if not found
-template <typename Functional>
-const interface::ITree* searchDf(const interface::ITree *root, Functional evaluate) {
-  std::stack<Helpers::TreeNodeIndex> stack;
+template <typename TTree, typename Functional>
+const TTree* searchDf(const TTree *root, Functional evaluate) {
+  std::stack<Helpers::TreeNodeIndex<TTree>> stack;
   stack.emplace(root, 0);
   while (!stack.empty()) {
     auto cursor(stack.top().pointer);
     if (stack.top().index == 0 && evaluate(cursor))
       return cursor;
     if (stack.top().index < cursor->getSize()) {
-      stack.emplace(&cursor->[stack.top().index++], 0);
+      stack.emplace(&cursor->operator[](stack.top().index++), 0);
     }
     else stack.pop();
   }
@@ -39,16 +42,16 @@ const interface::ITree* searchDf(const interface::ITree *root, Functional evalua
 /// \brief            Breadth-First Search using a Functional to evaluate the node
 /// \param evaluate   Functional used to evaluate the node
 /// \return           Const-pointer to first node matching the functional, or nullptr if not found
-template <typename Functional>
-const interface::ITree* searchBf(const interface::ITree *root, Functional evaluate) {
-  std::queue<Helpers::TreeNodeIndex> queue;
+template <typename TTree, typename Functional>
+const TTree* searchBf(const TTree *root, Functional evaluate) {
+  std::queue<Helpers::TreeNodeIndex<TTree>> queue;
   queue.emplace(root, 0);
   while (!queue.empty()) {
     auto cursor(queue.front().pointer);
     if (evaluate(cursor))
       return cursor;
     for (auto i(0); i < cursor->getSize(); ++i)
-      queue.emplace(&cursor->[i], 0);
+      queue.emplace(&cursor->operator[](i), 0);
     queue.pop();
   }
   return nullptr;

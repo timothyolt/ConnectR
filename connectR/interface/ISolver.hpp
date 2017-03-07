@@ -15,16 +15,14 @@ class ISolver {
  public:
   typedef TBoard board_type;
   typedef TTree tree_type;
- private:
+ protected:
   TBoard start;
   TTree tree;
   bool player;
- protected:
   ISolver() : start(), tree(), player(false) {}
   ISolver(TBoard start, bool player) : start(start), tree(tree_type()), player(player) { };
  public:
-
-  virtual board_type::size_type solve() = 0;
+  virtual typename board_type::size_type solve() = 0;
 };
 
 }  // namespace interface

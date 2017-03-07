@@ -11,9 +11,9 @@ namespace cr {
 /// \brief Namespace for standard connectR interfaces
 namespace iteration1 {
 
-class SolverBlank : public interface::ISolver<Board2D, TreeBasic> {
+class SolverBasic : public interface::ISolver<Board2D, TreeBasic> {
  public:
-  short solve() override;
+  TreeBasic::data_type::size_type solve() override;
 };
 
 }  // namespace iteration1

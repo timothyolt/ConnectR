@@ -19,7 +19,7 @@ class ITree {
   typedef TData data_type;
 
  public:
-  const data_type::size_type getSize() const { return getData().getSize().getWidth(); }
+  const typename data_type::size_type getSize() const { return getData().getSize().getWidth(); }
 
   virtual const node_type* getParent() const = 0;
 
@@ -34,6 +34,8 @@ class ITree {
   virtual void setData(data_type data) = 0;
 
   virtual node_type& operator[] (long index) = 0;
+
+  virtual const node_type& operator[] (long index) const = 0;
 };
 
 }  // namespace interface

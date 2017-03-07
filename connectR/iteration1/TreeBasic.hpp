@@ -27,19 +27,21 @@ class TreeBasic : public interface::ITree<TreeBasic, Board2D> {
 
   TreeBasic(node_type* parent, data_type& data, std::vector<node_type>& children);
 
-  const node_type *getParent() const;
+  const node_type *getParent() const override;
 
-  node_type *getParent();
+  node_type *getParent() override;
 
-  void setParent(node_type *parent);
+  void setParent(node_type *parent) override;
 
-  const data_type& getData() const;
+  const data_type& getData() const override;
 
-  data_type& getData();
+  data_type& getData() override;
 
-  void setData(Board2D data);
+  void setData(Board2D data) override;
 
   node_type &operator[](long index) override;
+
+  const node_type &operator[](long index) const override;
 
   const std::vector<node_type> &getChildren() const;
 

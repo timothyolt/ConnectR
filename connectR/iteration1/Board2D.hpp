@@ -33,12 +33,12 @@ class Board2D : public interface::IBoard<short, bool> {
   /// \param column column to read
   /// \param row    row to read
   /// \return       Board state at the position
-  const data_type get(size_type column, size_type row) const;
+  const data_type get(size_type column, size_type row) const override;
 
   /// \brief        Drops a token into to board
   /// \param column Column to drop token into
   /// \param state  Which player token to drop
-  void drop(const size_type column, const data_type state);
+  void drop(const size_type column, const data_type state) override;
 };
 
 }  // namespace iteration1
