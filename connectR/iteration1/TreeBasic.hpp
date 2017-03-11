@@ -14,18 +14,21 @@ class TreeBasic : public interface::ITree<TreeBasic, Board2D> {
   node_type* parent;
   std::vector<node_type> children;
   data_type data;
+  int heuristic;
 
  public:
 
   TreeBasic();
 
-  explicit TreeBasic(data_type& data);
+  explicit TreeBasic(data_type data);
 
-  TreeBasic(node_type* parent, data_type& data);
+  TreeBasic(node_type* parent, data_type data);
 
-  TreeBasic(data_type& data, std::vector<node_type>& children);
+  TreeBasic(data_type data, std::vector<node_type>& children);
 
-  TreeBasic(node_type* parent, data_type& data, std::vector<node_type>& children);
+  TreeBasic(node_type* parent, data_type data, std::vector<node_type>& children);
+
+  const size_type getSize() const override;
 
   const node_type *getParent() const override;
 
@@ -46,6 +49,10 @@ class TreeBasic : public interface::ITree<TreeBasic, Board2D> {
   const std::vector<node_type> &getChildren() const;
 
   void setChildren(const std::vector<node_type> &children);
+
+  int getHeuristic() const;
+
+  void setHeuristic(int heuristic);
 };
 
 }  // namespace iteration1

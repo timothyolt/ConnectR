@@ -17,9 +17,9 @@ class ITree {
   typedef TNode node_type;
   /// \brief type of tree data
   typedef TData data_type;
-
+  typename TData::size_type typedef size_type;
  public:
-  const typename data_type::size_type getSize() const { return getData().getSize().getWidth(); }
+  virtual const size_type getSize() const = 0;
 
   virtual const node_type* getParent() const = 0;
 

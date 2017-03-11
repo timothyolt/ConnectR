@@ -11,13 +11,23 @@ namespace cr {
 namespace Helpers {
 
 template <typename TTree>
-class TreeNodeIndex {
+class ConstTreeNodeIndex {
  public:
   const TTree *pointer;
   typename std::vector<TTree>::size_type index;
-  TreeNodeIndex(const TTree *pointer, typename std::vector<TTree>::size_type index)
+  ConstTreeNodeIndex(const TTree *pointer, typename std::vector<TTree>::size_type index)
       : pointer(pointer), index(index) { }
 };
+
+template <typename TTree>
+class TreeNodeIndex {
+ public:
+  TTree *pointer;
+  typename std::vector<TTree>::size_type index;
+  TreeNodeIndex(TTree *pointer, typename std::vector<TTree>::size_type index)
+      : pointer(pointer), index(index) { }
+};
+
 }
 
 /// \brief            Depth-First Search using a Functional to evaluate the node
@@ -25,7 +35,7 @@ class TreeNodeIndex {
 /// \return           Const-pointer to first node matching the functional, or nullptr if not found
 template <typename TTree, typename Functional>
 const TTree* searchDf(const TTree *root, Functional evaluate) {
-  std::stack<Helpers::TreeNodeIndex<TTree>> stack;
+  std::stack<Helpers::ConstTreeNodeIndex<TTree>> stack;
   stack.emplace(root, 0);
   while (!stack.empty()) {
     auto cursor(stack.top().pointer);
@@ -39,12 +49,33 @@ const TTree* searchDf(const TTree *root, Functional evaluate) {
   return nullptr;
 }
 
+template <typename TTree, typename Populate, typename Evaluate>
+const typename TTree::size_type miniMax(TTree *root, Populate populate, Evaluate evaluate) {
+  std::stack<Helpers::TreeNodeIndex<TTree>> stack;
+  stack.emplace(root, 0);
+  populate(root, stack.size());
+  while (!stack.empty()) {
+    auto cursor(stack.top().pointer);
+    auto index(stack.top().index);
+    if (index < cursor->getSize()) {
+      auto child(&cursor->operator[](stack.top().index++));
+      stack.emplace(child, 0);
+      populate(child, stack.size()); // populate next generation
+    }
+    else {
+      evaluate(cursor, stack.size());
+      stack.pop();
+    }
+  }
+  return 0;
+}
+
 /// \brief            Breadth-First Search using a Functional to evaluate the node
 /// \param evaluate   Functional used to evaluate the node
 /// \return           Const-pointer to first node matching the functional, or nullptr if not found
 template <typename TTree, typename Functional>
 const TTree* searchBf(const TTree *root, Functional evaluate) {
-  std::queue<Helpers::TreeNodeIndex<TTree>> queue;
+  std::queue<Helpers::ConstTreeNodeIndex<TTree>> queue;
   queue.emplace(root, 0);
   while (!queue.empty()) {
     auto cursor(queue.front().pointer);

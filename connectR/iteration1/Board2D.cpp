@@ -17,8 +17,8 @@ Board2D::Board2D(BoardSize<size_type> size)
     board.emplace_back(size.getHeight() * 2);
 }
 
-Board2D::Board2D(const Board2D& origin)
-    : IBoard(origin), board(origin.board) { }
+Board2D::Board2D(const Board2D* origin)
+    : IBoard(*origin), board(origin->board) { }
 
 const data_type Board2D::get(size_type column, size_type row) const {
   return (board[column][row * 2 + 1] << 1) | board[column][row * 2];

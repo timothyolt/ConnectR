@@ -12,8 +12,12 @@ namespace cr {
 namespace iteration1 {
 
 class SolverBasic : public interface::ISolver<Board2D, TreeBasic> {
+ private:
+  tree_type tree;
+  static void populate(tree_type* node, tree_type::data_type::size_type depth);
+  static void evaluate(tree_type* node, tree_type::data_type::size_type depth);
  public:
-  TreeBasic::data_type::size_type solve() override;
+  tree_type::data_type::size_type solve() override;
 };
 
 }  // namespace iteration1

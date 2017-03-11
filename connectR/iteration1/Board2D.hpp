@@ -27,7 +27,7 @@ class Board2D : public interface::IBoard<short, bool> {
   /// \brief        Copy constructor, copies board state into other
   ///               Deep copies the board using std::vector copy
   /// \param origin Other board to pull data from
-  explicit Board2D(const Board2D& origin);
+  explicit Board2D(const Board2D* origin);
 
   /// \brief        Get board state
   /// \param column column to read

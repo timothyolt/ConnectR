@@ -1,4 +1,4 @@
-// Copyright 2017 timothyolt.
+// Copyright 2017 Timothy Oltjenbruns.
 
 #include <assert.h>
 #include "TreeBasic.hpp"
@@ -11,20 +11,24 @@ using data_type = cr::iteration1::TreeBasic::data_type;
 TreeBasic::TreeBasic()
     : parent(nullptr), data(), children({ }) { }
 
-TreeBasic::TreeBasic(data_type& data)
+TreeBasic::TreeBasic(data_type data)
     : parent(nullptr), data(data), children({ }) { }
 
-TreeBasic::TreeBasic(node_type *parent, data_type& data)
+TreeBasic::TreeBasic(node_type *parent, data_type data)
     : parent(parent), data(data), children({ }) { }
 
-TreeBasic::TreeBasic(data_type& data, std::vector<node_type>& children)
+TreeBasic::TreeBasic(data_type data, std::vector<node_type>& children)
     : parent(nullptr), data(data), children(children) {
   assert(children.size() == 0 || children.size() == data.getSize().getWidth());
 }
 
-TreeBasic::TreeBasic(node_type *parent, data_type& data, std::vector<node_type>& children)
+TreeBasic::TreeBasic(node_type *parent, data_type data, std::vector<node_type>& children)
     : parent(parent), data(data), children(children) {
   assert(children.size() == 0 || children.size() == data.getSize().getWidth());
+}
+
+const short TreeBasic::getSize() const {
+  return (const short) children.size();
 }
 
 const node_type *TreeBasic::getParent() const {
@@ -64,5 +68,13 @@ const vector<node_type> &TreeBasic::getChildren() const {
 }
 
 void TreeBasic::setChildren(const vector<node_type> &children) {
-  this->children = children;
+  TreeBasic::children = children;
+}
+
+int TreeBasic::getHeuristic() const {
+  return heuristic;
+}
+
+void TreeBasic::setHeuristic(int heuristic) {
+  TreeBasic::heuristic = heuristic;
 }
