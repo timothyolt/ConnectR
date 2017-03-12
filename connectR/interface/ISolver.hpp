@@ -20,7 +20,7 @@ class ISolver {
   TTree tree;
   bool player;
   ISolver() : start(), tree(), player(false) {}
-  ISolver(TBoard start, bool player) : start(start), tree(tree_type()), player(player) { };
+  ISolver(TBoard start, bool player) : start(start), tree(tree_type(start)), player(player) { };
  public:
   virtual typename board_type::size_type solve() = 0;
 };

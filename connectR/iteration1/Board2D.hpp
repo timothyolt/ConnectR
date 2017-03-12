@@ -10,13 +10,13 @@ namespace cr {
 /// \brief Namespace for Iteration 1: Basic 2D std::vector<bool> implementation
 namespace iteration1 {
 
-class Board2D : public interface::IBoard<short, bool> {
+class Board2D : public interface::IBoard<short, short> {
  private:
   /// \brief  Game board expressing each position as a pair of bits
   ///         0b00 = unset, 0b01 = player 1, 0b10 = player 2
   ///         \p width size vector of \p height * 2 size bitset vectors
   ///         Super awesome vector optimized as a bitset
-  std::vector<std::vector<bool>> board;
+  std::vector<std::vector<short>> board;
 
  public:
   Board2D();

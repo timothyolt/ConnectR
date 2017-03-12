@@ -13,10 +13,10 @@ namespace iteration1 {
 
 class SolverBasic : public interface::ISolver<Board2D, TreeBasic> {
  private:
-  tree_type tree;
   static void populate(tree_type* node, tree_type::data_type::size_type depth);
   static void evaluate(tree_type* node, tree_type::data_type::size_type depth);
  public:
+  SolverBasic(board_type start, bool player);
   tree_type::data_type::size_type solve() override;
 };
 
