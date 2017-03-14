@@ -67,6 +67,10 @@ const vector<node_type> &TreeBasic::getChildren() const {
   return children;
 }
 
+vector<node_type> &TreeBasic::getChildren() {
+  return children;
+}
+
 void TreeBasic::setChildren(const vector<node_type> &children) {
   TreeBasic::children = children;
 }

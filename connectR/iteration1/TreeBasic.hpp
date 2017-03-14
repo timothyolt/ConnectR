@@ -48,6 +48,8 @@ class TreeBasic : public interface::ITree<TreeBasic, Board2D> {
 
   const std::vector<node_type> &getChildren() const;
 
+  std::vector<node_type> &getChildren();
+
   void setChildren(const std::vector<node_type> &children);
 
   int getHeuristic() const;
