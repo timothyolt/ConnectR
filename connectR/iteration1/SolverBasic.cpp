@@ -3,23 +3,26 @@
 #include <Utils.hpp>
 #include <random>
 #include <algorithm>
+#include <iostream>
 #include "SolverBasic.hpp"
 
 using cr::iteration1::SolverBasic;
 
 SolverBasic::SolverBasic(cr::iteration1::Board2D start, bool player) : ISolver(start, player) { }
 
-short SolverBasic::solve() {
+SolverBasic::board_type::size_type SolverBasic::solve() {
   miniMax(&tree, populate, evaluate, propagate);
-  std::vector<short> matches;
-  for (short column(0); column < tree.getChildren().size(); ++column)
-    if (tree[column].getHeuristic() == tree.getHeuristic())
-      matches.push_back(column);
-  return matches[rand() & matches.size()];
+  const tree_type* node(&tree);
+  while (node->getChildren().size() != 0) {
+    auto a = stochasticSelectBest(node);
+    node = &node->getChildren()[a];
+    std::cout << node->getData() << std::endl;
+  }
+  return stochasticSelectBest(&tree);
 }
 
 void SolverBasic::populate(tree_type *node, tree_type::data_type::size_type depth) {
-  if (depth > 3) return;
+  if (depth > 8) return;
   unsigned long width((unsigned long) node->getData().getSize().getWidth());
   std::vector<tree_type> children;
   for (auto column(0); column < width; ++column) {

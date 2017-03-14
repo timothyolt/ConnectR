@@ -16,9 +16,10 @@ class SolverBasic : public interface::ISolver<Board2D, TreeBasic> {
   static void populate(tree_type* node, tree_type::data_type::size_type depth);
   static void evaluate(tree_type* node, tree_type::data_type::size_type depth);
   static void propagate(tree_type* node, tree_type::data_type::size_type depth);
+  static typename board_type::size_type stochasticSelectBest(const tree_type* node);
  public:
   SolverBasic(board_type start, bool player);
-  tree_type::data_type::size_type solve() override;
+  typename board_type::size_type solve() override;
 };
 
 }  // namespace iteration1
