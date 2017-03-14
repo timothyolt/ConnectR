@@ -14,6 +14,7 @@ int main(int argCount, char* args[]) {
   std::cout << "Hello ConnectR World!" << std::endl;
   srand((unsigned int) time(0));
   Board2D start(BoardSize<short>((short) 7, (short) 6, (short) 4));
+  std::cout << start << std::endl;
   SolverBasic solver(start, true);
   solver.solve();
 }

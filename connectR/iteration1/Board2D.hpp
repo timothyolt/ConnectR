@@ -4,11 +4,16 @@
 #define CONNECTR_ITERATION1_BOARD_HPP_
 
 #include <vector>
+#include <ostream>
 #include "interface/IBoard.hpp"
 
 namespace cr {
 /// \brief Namespace for Iteration 1: Basic 2D std::vector<bool> implementation
 namespace iteration1 {
+
+class Board2D;
+
+std::ostream &operator<<(std::ostream &os, const Board2D &d);
 
 class Board2D : public interface::IBoard<short, short> {
  private:
@@ -39,6 +44,8 @@ class Board2D : public interface::IBoard<short, short> {
   /// \param column Column to drop token into
   /// \param state  Which player token to drop
   void drop(const size_type column, const data_type state) override;
+
+  friend std::ostream &operator<<(std::ostream &os, const Board2D &d);
 };
 
 }  // namespace iteration1
