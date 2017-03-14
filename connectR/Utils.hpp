@@ -6,6 +6,7 @@
 #include <interface/ITree.hpp>
 #include <stack>
 #include <queue>
+#include <algorithm>
 
 namespace cr {
 namespace Helpers {
@@ -49,8 +50,8 @@ const TTree* searchDf(const TTree *root, Functional evaluate) {
   return nullptr;
 }
 
-template <typename TTree, typename Populate, typename Evaluate>
-const typename TTree::size_type miniMax(TTree *root, Populate populate, Evaluate evaluate) {
+template <typename TTree, typename Action>
+void miniMax(TTree *root, Action populate, Action evaluate, Action propagate) {
   std::stack<Helpers::TreeNodeIndex<TTree>> stack;
   stack.emplace(root, 0);
   populate(root, stack.size());
@@ -63,11 +64,14 @@ const typename TTree::size_type miniMax(TTree *root, Populate populate, Evaluate
       populate(child, stack.size()); // populate next generation
     }
     else {
-      evaluate(cursor, stack.size());
+      if (cursor->getSize() == 0)
+        evaluate(cursor, stack.size());
+      else
+        propagate(cursor, stack.size());
       stack.pop();
     }
   }
-  return 0;
+  return;
 }
 
 /// \brief            Breadth-First Search using a Functional to evaluate the node
