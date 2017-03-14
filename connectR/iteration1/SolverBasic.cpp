@@ -44,5 +44,15 @@ void SolverBasic::propagate(tree_type *node, tree_type::data_type::size_type dep
     node->setHeuristic(std::max_element(node->getChildren().begin(), node->getChildren().end(), compare)->getHeuristic());
   else
     node->setHeuristic(std::min_element(node->getChildren().begin(), node->getChildren().end(), compare)->getHeuristic());
-  // TODO(timothyolt): clean up unused children
+  // clean up unused children
+  std::replace_if(node->getChildren().begin(), node->getChildren().end(),
+                  [node](auto &a) { return a.getHeuristic() != node->getHeuristic(); }, tree_type());
+}
+
+SolverBasic::board_type::size_type SolverBasic::stochasticSelectBest(const TreeBasic *node) {
+  std::vector<short> matches;
+  for (short column(0); column < node->getChildren().size(); ++column)
+    if (node->operator[](column).getHeuristic() == node->getHeuristic())
+      matches.push_back(column);
+  return matches[rand() % matches.size()];
 }
