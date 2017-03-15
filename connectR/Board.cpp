@@ -4,10 +4,11 @@
 #include "Board.hpp"
 
 using cr::Board;
-using size_type = cr::Board::size_type;
-using data_type = cr::Board::data_type;
+using size_type = Board::size_type;
+using data_type = Board::data_type;
 
-Board::Board() : board({ }) { }
+Board::Board()
+    : width(0), height(0), connect(0), board({ }) { }
 
 Board::Board(size_type width, size_type height, size_type connect)
     : width(width), height(height), connect(connect), board({ }) {
@@ -40,22 +41,24 @@ void Board::drop(const size_type column, const data_type state) {
 }
 
 std::ostream &cr::operator<<(std::ostream &os, const Board &d) {
-  std::cout << '+';
+  using std::cout;
+  using std::endl;
+  cout << '+';
   for (auto column(0); column < d.width; ++column)
-    std::cout << '-';
-  std::cout << '+' << std::endl;
+    cout << '-';
+  cout << '+' << endl;
   for (auto row(d.height); row >= 0; --row) {
-    std::cout << '|';
+    cout << '|';
     for (auto column(0); column < d.width; ++column)
       if (row < d.board[column].size())
-        std::cout << (d.board[column][row] == 0 ? 'X' : 'O');
+        cout << (d.board[column][row] == 0 ? 'X' : 'O');
       else
-        std::cout << ' ';
-    std::cout << '|' << std::endl;
+        cout << ' ';
+    cout << '|' << endl;
   }
-  std::cout << '+';
+  cout << '+';
   for (auto column(0); column < d.width; ++column)
-    std::cout << '-';
-  std::cout << '+' << std::endl;
+    cout << '-';
+  cout << '+' << endl;
   return os;
 }

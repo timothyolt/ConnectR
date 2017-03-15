@@ -20,11 +20,11 @@ class Board {
   typedef short data_type;
  private:
   /// \brief  Board width in game spaces
-  size_type width;
+  const size_type width;
   /// \brief  Board height in game spaces
-  size_type height;
+  const size_type height;
   /// \brief  Number of connected spaces to win
-  size_type connect;
+  const size_type connect;
   /// \brief  Game board expressing each position as a pair of bits
   ///         0b00 = unset, 0b01 = player 1, 0b10 = player 2
   ///         \p width size vector of \p height * 2 size bitset vectors

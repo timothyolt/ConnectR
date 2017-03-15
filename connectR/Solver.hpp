@@ -11,7 +11,7 @@ namespace cr {
 class Solver {
  public:
  private:
-  Board start;
+  const Board start;
   Tree* tree;
   bool player;
   static void populate(Tree* node, Board::size_type depth);

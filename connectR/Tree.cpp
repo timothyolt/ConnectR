@@ -13,46 +13,30 @@ Tree::~Tree() {
 }
 
 Tree::Tree()
-    : parent(nullptr), data(), children({ }) { }
+    : parent(nullptr), board(), children({ }) { }
 
 Tree::Tree(Board data)
-    : parent(nullptr), data(data), children({ }) { }
+    : parent(nullptr), board(data), children({ }) { }
 
-Tree::Tree(Tree *parent, Board data)
-    : parent(parent), data(data), children({ }) { }
+Tree::Tree(Tree *parent, Board board)
+    : parent(parent), board(board), children({ }) { }
 
 Tree::Tree(Board data, vector<Tree*> &children)
-    : parent(nullptr), data(data), children(children) {
+    : parent(nullptr), board(data), children(children) {
   assert(children.size() == 0 || children.size() == data.getWidth());
 }
 
 Tree::Tree(Tree *parent, Board data, vector<Tree*>& children)
-    : parent(parent), data(data), children(children) {
+    : parent(parent), board(data), children(children) {
   assert(children.size() == 0 || children.size() == data.getWidth());
-}
-
-const Board::size_type Tree::getSize() const {
-  return (const Board::size_type) children.size();
 }
 
 const Tree *Tree::getParent() const {
   return parent;
 }
 
-Tree *Tree::getParent() {
-  return parent;
-}
-
-void Tree::setParent(Tree *parent) {
-  Tree::parent = parent;
-}
-
 const Board& Tree::getData() const {
-  return data;
-}
-
-Board& Tree::getData() {
-  return data;
+  return board;
 }
 
 Tree* Tree::operator[](long index) {
@@ -61,10 +45,6 @@ Tree* Tree::operator[](long index) {
 
 const Tree* Tree::operator[](long index) const {
   return children[index];
-}
-
-void Tree::setData(Board data) {
-  Tree::data = data;
 }
 
 const vector<Tree*>& Tree::getChildren() const {

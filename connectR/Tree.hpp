@@ -9,9 +9,9 @@ namespace cr {
 
 class Tree {
  private:
-  Tree* parent;
+  const Tree* parent;
+  const Board board;
   std::vector<Tree*> children;
-  Board data;
   int heuristic;
 
  public:
@@ -22,25 +22,15 @@ class Tree {
 
   explicit Tree(Board data);
 
-  Tree(Tree* parent, Board data);
+  Tree(Tree* parent, Board board);
 
   Tree(Board data, std::vector<Tree*> &children);
 
   Tree(Tree* parent, Board data, std::vector<Tree*>& children);
 
-  const Board::size_type getSize() const;
-
   const Tree *getParent() const;
 
-  Tree *getParent();
-
-  void setParent(Tree *parent);
-
   const Board& getData() const;
-
-  Board& getData();
-
-  void setData(Board data);
 
   Tree* operator[](long index);
 

@@ -31,12 +31,11 @@ Board::size_type Solver::solve() {
 void Solver::populate(Tree *node, Board::size_type depth) {
   if (depth > 3) return;
   unsigned long width((unsigned long) node->getData().getWidth());
-  std::vector<Tree*> children;
   for (auto column(0); column < width; ++column) {
-    children.push_back(new Tree(node, Board(node->getData())));
-    children.at((unsigned long) column)->getData().drop((const short) column, depth % 2 == 0);
+    Board board(node->getData());
+    board.drop((const short) column, depth % 2 == 0);
+    node->getChildren().push_back(new Tree(node, board));
   }
-  node->setChildren(children);
 }
 
 void Solver::evaluate(Tree *node, Board::size_type depth) {
