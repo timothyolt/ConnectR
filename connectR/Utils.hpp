@@ -59,7 +59,7 @@ void miniMax(TTree *root, Action populate, Action evaluate, Action propagate) {
     auto cursor(stack.top().pointer);
     auto index(stack.top().index);
     if (index < cursor->getSize()) {
-      auto child(&cursor->operator[](stack.top().index++));
+      auto child(cursor->operator[](stack.top().index++));
       stack.emplace(child, 0);
       populate(child, stack.size()); // populate next generation
     }

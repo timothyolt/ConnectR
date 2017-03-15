@@ -8,6 +8,11 @@ using cr::iteration1::TreeBasic;
 using node_type = cr::iteration1::TreeBasic::node_type;
 using data_type = cr::iteration1::TreeBasic::data_type;
 
+TreeBasic::~TreeBasic() {
+  for (auto c(0); c < children.size(); ++c)
+    delete children[c];
+}
+
 TreeBasic::TreeBasic()
     : parent(nullptr), data(), children({ }) { }
 
@@ -17,12 +22,12 @@ TreeBasic::TreeBasic(data_type data)
 TreeBasic::TreeBasic(node_type *parent, data_type data)
     : parent(parent), data(data), children({ }) { }
 
-TreeBasic::TreeBasic(data_type data, std::vector<node_type>& children)
+TreeBasic::TreeBasic(data_type data, vector<node_type*> &children)
     : parent(nullptr), data(data), children(children) {
   assert(children.size() == 0 || children.size() == data.getSize().getWidth());
 }
 
-TreeBasic::TreeBasic(node_type *parent, data_type data, std::vector<node_type>& children)
+TreeBasic::TreeBasic(node_type *parent, data_type data, vector<node_type*>& children)
     : parent(parent), data(data), children(children) {
   assert(children.size() == 0 || children.size() == data.getSize().getWidth());
 }
@@ -51,11 +56,11 @@ data_type& TreeBasic::getData() {
   return data;
 }
 
-node_type &TreeBasic::operator[](long index) {
+node_type* TreeBasic::operator[](long index) {
   return children[index];
 }
 
-const node_type &TreeBasic::operator[](long index) const {
+const node_type* TreeBasic::operator[](long index) const {
   return children[index];
 }
 
@@ -63,15 +68,15 @@ void TreeBasic::setData(Board2D data) {
   TreeBasic::data = data;
 }
 
-const vector<node_type> &TreeBasic::getChildren() const {
+const vector<node_type*>& TreeBasic::getChildren() const {
   return children;
 }
 
-vector<node_type> &TreeBasic::getChildren() {
+vector<node_type*>& TreeBasic::getChildren() {
   return children;
 }
 
-void TreeBasic::setChildren(const vector<node_type> &children) {
+void TreeBasic::setChildren(const vector<node_type*>& children) {
   TreeBasic::children = children;
 }
 

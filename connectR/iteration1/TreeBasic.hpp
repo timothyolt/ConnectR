@@ -12,11 +12,13 @@ namespace iteration1 {
 class TreeBasic : public interface::ITree<TreeBasic, Board2D> {
  private:
   node_type* parent;
-  std::vector<node_type> children;
+  std::vector<node_type*> children;
   data_type data;
   int heuristic;
 
  public:
+
+  ~TreeBasic();
 
   TreeBasic();
 
@@ -24,9 +26,9 @@ class TreeBasic : public interface::ITree<TreeBasic, Board2D> {
 
   TreeBasic(node_type* parent, data_type data);
 
-  TreeBasic(data_type data, std::vector<node_type>& children);
+  TreeBasic(data_type data, std::vector<node_type*> &children);
 
-  TreeBasic(node_type* parent, data_type data, std::vector<node_type>& children);
+  TreeBasic(node_type* parent, data_type data, std::vector<node_type*>& children);
 
   const size_type getSize() const override;
 
@@ -42,15 +44,15 @@ class TreeBasic : public interface::ITree<TreeBasic, Board2D> {
 
   void setData(Board2D data) override;
 
-  node_type &operator[](long index) override;
+  node_type* operator[](long index) override;
 
-  const node_type &operator[](long index) const override;
+  const node_type* operator[](long index) const override;
 
-  const std::vector<node_type> &getChildren() const;
+  const std::vector<node_type*>& getChildren() const;
 
-  std::vector<node_type> &getChildren();
+  std::vector<node_type*>& getChildren();
 
-  void setChildren(const std::vector<node_type> &children);
+  void setChildren(const std::vector<node_type*>& children);
 
   int getHeuristic() const;
 

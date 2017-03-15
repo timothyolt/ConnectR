@@ -33,9 +33,9 @@ class ITree {
 
   virtual void setData(data_type data) = 0;
 
-  virtual node_type& operator[] (long index) = 0;
+  virtual node_type* operator[] (long index) = 0;
 
-  virtual const node_type& operator[] (long index) const = 0;
+  virtual const node_type* operator[] (long index) const = 0;
 };
 
 }  // namespace interface
