@@ -55,10 +55,6 @@ vector<Tree*>& Tree::getChildren() {
   return children;
 }
 
-void Tree::setChildren(const vector<Tree*>& children) {
-  Tree::children = children;
-}
-
 int Tree::getHeuristic() const {
   return heuristic;
 }

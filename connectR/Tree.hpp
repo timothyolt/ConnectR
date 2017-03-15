@@ -40,8 +40,6 @@ class Tree {
 
   std::vector<Tree*>& getChildren();
 
-  void setChildren(const std::vector<Tree*>& children);
-
   int getHeuristic() const;
 
   void setHeuristic(int heuristic);
