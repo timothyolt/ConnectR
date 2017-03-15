@@ -4,39 +4,46 @@
 #include <random>
 #include <algorithm>
 #include <iostream>
-#include "SolverBasic.hpp"
+#include "Solver.hpp"
 
-using cr::iteration1::SolverBasic;
+using cr::Board;
+using cr::Tree;
+using cr::Solver;
 
-SolverBasic::SolverBasic(cr::iteration1::Board2D start, bool player) : ISolver(start, player) { }
+Solver::~Solver() {
+  delete tree;
+}
 
-SolverBasic::board_type::size_type SolverBasic::solve() {
-  miniMax(&tree, populate, evaluate, propagate);
-  const tree_type* node(&tree);
+Solver::Solver(Board start, bool player)
+    : start(start), tree(new Tree(start)), player(player) { }
+
+Board::size_type Solver::solve() {
+  miniMax(tree, populate, evaluate, propagate);
+  const Tree* node(tree);
   while (node->getChildren().size() != 0) {
     auto a = stochasticSelectBest(node);
     node = node->getChildren().at((unsigned long) a);
     std::cout << node->getData() << std::endl;
   }
-  return stochasticSelectBest(&tree);
+  return stochasticSelectBest(tree);
 }
 
-void SolverBasic::populate(tree_type *node, tree_type::data_type::size_type depth) {
+void Solver::populate(Tree *node, Board::size_type depth) {
   if (depth > 3) return;
-  unsigned long width((unsigned long) node->getData().getSize().getWidth());
-  std::vector<tree_type*> children;
+  unsigned long width((unsigned long) node->getData().getWidth());
+  std::vector<Tree*> children;
   for (auto column(0); column < width; ++column) {
-    children.push_back(new tree_type(node, board_type(node->getData())));
+    children.push_back(new Tree(node, Board(node->getData())));
     children.at((unsigned long) column)->getData().drop((const short) column, depth % 2 == 0);
   }
   node->setChildren(children);
 }
 
-void SolverBasic::evaluate(tree_type *node, tree_type::data_type::size_type depth) {
+void Solver::evaluate(Tree *node, Board::size_type depth) {
   node->setHeuristic(rand() % 42);
 }
 
-void SolverBasic::propagate(tree_type *node, tree_type::data_type::size_type depth) {
+void Solver::propagate(Tree *node, Board::size_type depth) {
   auto compare = [](auto &a, auto &b){
     return a->getHeuristic() < b->getHeuristic();
   };
@@ -47,7 +54,7 @@ void SolverBasic::propagate(tree_type *node, tree_type::data_type::size_type dep
   // clean up unused children
   std::replace_if(
       node->getChildren().begin(), node->getChildren().end(),
-      [node](tree_type *a) {
+      [node](Tree *a) {
         if (a->getHeuristic() == node->getHeuristic())
           return false;
         delete a;
@@ -56,7 +63,7 @@ void SolverBasic::propagate(tree_type *node, tree_type::data_type::size_type dep
       nullptr);
 }
 
-SolverBasic::board_type::size_type SolverBasic::stochasticSelectBest(const TreeBasic *node) {
+Board::size_type Solver::stochasticSelectBest(const Tree *node) {
   std::vector<short> matches;
   for (short column(0); column < node->getChildren().size(); ++column)
     if (node->getChildren().at((unsigned long)column) != nullptr &&

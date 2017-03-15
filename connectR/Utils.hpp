@@ -3,7 +3,6 @@
 #ifndef CONNECTR_UTILS_HPP_
 #define CONNECTR_UTILS_HPP_
 
-#include <interface/ITree.hpp>
 #include <stack>
 #include <queue>
 #include <algorithm>
