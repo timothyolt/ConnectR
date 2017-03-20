@@ -12,7 +12,7 @@ class Tree {
   const Tree* parent;
   const Board board;
   std::vector<Tree*> children;
-  Board::size_type heuristic;
+  Board::score_type heuristic;
 
  public:
 
@@ -40,9 +40,9 @@ class Tree {
 
   std::vector<Tree*>& getChildren();
 
-  Board::size_type getHeuristic() const;
+  Board::score_type getHeuristic() const;
 
-  void setHeuristic(Board::size_type heuristic);
+  void setHeuristic(Board::score_type heuristic);
 };
 
 }  // namespace cr

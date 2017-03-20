@@ -107,6 +107,10 @@ std::string Board::toString() const {
   return stream.str();
 }
 
+size_type Board::getCount() const {
+  return count;
+}
+
 std::ostream &cr::operator<<(std::ostream &os, const Board &d) {
   using std::endl;
   os << '+';

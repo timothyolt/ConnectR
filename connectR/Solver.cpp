@@ -12,17 +12,20 @@ Solver::~Solver() {
   delete tree;
 }
 
-Solver::Solver(Board* start, bool player)
-    : start(start), tree(new Tree(start)), player(player) { }
+Solver::Solver(Board* start)
+    : start(start), tree(new Tree(start)) { }
 
 Board::size_type Solver::solve() {
   miniMax(tree, populate, evaluate, propagate);
-  const Tree* node(tree);
-  while (node->getChildren().size() != 0) {
+  // store a best value
+  auto best(stochasticSelectBest(tree));
+  // print an ideal target
+  const Tree* node(tree->getChildren().at(best));
+  while (node->getChildren().size() != 0)
     node = node->getChildren().at(stochasticSelectBest(node));
-    std::cout << *node->getData() << std::endl;
-  }
-  return stochasticSelectBest(tree);
+  std::cout << "Ideal board with value " << best << ": " << std::endl << *node->getData() << std::endl;
+  // return previous selected best
+  return best;
 }
 
 void Solver::populate(Tree *node, Board::size_type depth) {
@@ -35,15 +38,15 @@ void Solver::populate(Tree *node, Board::size_type depth) {
   }
 }
 
-void Solver::evaluate(Tree *node, Board::size_type depth) {
+void Solver::evaluate(Tree *node) {
   node->setHeuristic(node->getData()->score());
 }
 
-void Solver::propagate(Tree *node, Board::size_type depth) {
+void Solver::propagate(Tree *node, Board::size_type player) {
   auto compare = [](auto &a, auto &b){
     return a->getHeuristic() < b->getHeuristic();
   };
-  if (depth % 2 == 0)
+  if (player == 0)
     node->setHeuristic((*std::max_element(node->getChildren().begin(), node->getChildren().end(), compare))->getHeuristic());
   else
     node->setHeuristic((*std::min_element(node->getChildren().begin(), node->getChildren().end(), compare))->getHeuristic());

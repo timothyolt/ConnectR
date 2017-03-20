@@ -54,10 +54,10 @@ vector<Tree*>& Tree::getChildren() {
   return children;
 }
 
-Board::size_type Tree::getHeuristic() const {
+Board::score_type Tree::getHeuristic() const {
   return heuristic;
 }
 
-void Tree::setHeuristic(Board::size_type heuristic) {
+void Tree::setHeuristic(Board::score_type heuristic) {
   Tree::heuristic = heuristic;
 }

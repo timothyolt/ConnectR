@@ -56,6 +56,8 @@ class Board {
   size_type getHeight() const;
   size_type getConnect() const;
 
+  size_type getCount() const;
+
   /// \brief        Drops a token into to board
   /// \param column Column to drop token into
   /// \param state  Which player token to drop
