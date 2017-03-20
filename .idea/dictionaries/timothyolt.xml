@@ -1,8 +1,17 @@
 <component name="ProjectDictionaryState">
   <dictionary name="timothyolt">
     <words>
+      <w>bitset</w>
+      <w>boardsize</w>
+      <w>boardstatevector</w>
+      <w>connectboard</w>
+      <w>connectr</w>
+      <w>isolver</w>
+      <w>itree</w>
+      <w>solverbasic</w>
       <w>stringstream</w>
       <w>timothyolt</w>
+      <w>treebasic</w>
     </words>
   </dictionary>
 </component>
