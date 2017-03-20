@@ -20,7 +20,7 @@ class Solver {
   static typename Board::size_type stochasticSelectBest(const Tree* node);
  public:
   ~Solver();
-  Solver(Board start, bool player);
+  Solver(Board* start, bool player);
   typename Board::size_type solve();
 };
 

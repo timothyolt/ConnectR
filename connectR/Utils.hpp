@@ -6,6 +6,8 @@
 #include <stack>
 #include <queue>
 #include <algorithm>
+#include <boost/dynamic_bitset.hpp>
+#include <iostream>
 
 namespace cr {
 namespace Helpers {

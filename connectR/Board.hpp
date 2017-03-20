@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <ostream>
+#include <boost/dynamic_bitset.hpp>
 
 namespace cr {
 
@@ -15,9 +16,8 @@ std::ostream &operator<<(std::ostream &os, const Board &d);
 class Board {
  public:
   /// \brief type of board container size
-  typedef int size_type;
-  /// \brief type of board space data
-  typedef short data_type;
+  typedef boost::dynamic_bitset<>::size_type size_type;
+  typedef long score_type;
  private:
   /// \brief  Board width in game spaces
   const size_type width;
@@ -25,13 +25,24 @@ class Board {
   const size_type height;
   /// \brief  Number of connected spaces to win
   const size_type connect;
+
+  const size_type area;
   /// \brief  Game board expressing each position as a pair of bits
   ///         0b00 = unset, 0b01 = player 1, 0b10 = player 2
   ///         \p width size vector of \p height * 2 size bitset vectors
   ///         Super awesome vector optimized as a bitset
-  std::vector<std::vector<short>> board;
+  //std::vector<std::vector<short>> board;
+  boost::dynamic_bitset<> board[2];
+  boost::dynamic_bitset<> cushion;
+  size_type count;
+  size_type* columnHeight;
+  size_type* history;
+
+  boost::dynamic_bitset<>::size_type shiftCount(boost::dynamic_bitset<>::size_type shift) const;
 
  public:
+  ~Board();
+
   Board();
 
   Board(size_type width, size_type height, size_type connect);
@@ -45,16 +56,16 @@ class Board {
   size_type getHeight() const;
   size_type getConnect() const;
 
-  /// \brief        Get board state
-  /// \param column column to read
-  /// \param row    row to read
-  /// \return       Board state at the position
-  const data_type get(size_type column, size_type row) const;
-
   /// \brief        Drops a token into to board
   /// \param column Column to drop token into
   /// \param state  Which player token to drop
-  void drop(const size_type column, const data_type state);
+  void drop(const size_type column);
+
+  void undo();
+
+  score_type score() const;
+
+  std::string toString() const;
 
   friend std::ostream &operator<<(std::ostream &os, const Board &d);
 };

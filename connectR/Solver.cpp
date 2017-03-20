@@ -2,8 +2,6 @@
 
 #include <Utils.hpp>
 #include <random>
-#include <algorithm>
-#include <iostream>
 #include "Solver.hpp"
 
 using cr::Board;
@@ -14,32 +12,31 @@ Solver::~Solver() {
   delete tree;
 }
 
-Solver::Solver(Board start, bool player)
+Solver::Solver(Board* start, bool player)
     : start(start), tree(new Tree(start)), player(player) { }
 
 Board::size_type Solver::solve() {
   miniMax(tree, populate, evaluate, propagate);
   const Tree* node(tree);
   while (node->getChildren().size() != 0) {
-    auto a = stochasticSelectBest(node);
-    node = node->getChildren().at((unsigned long) a);
-    std::cout << node->getData() << std::endl;
+    node = node->getChildren().at(stochasticSelectBest(node));
+    std::cout << *node->getData() << std::endl;
   }
   return stochasticSelectBest(tree);
 }
 
 void Solver::populate(Tree *node, Board::size_type depth) {
-  if (depth > 3) return;
-  unsigned long width((unsigned long) node->getData().getWidth());
-  for (auto column(0); column < width; ++column) {
+  if (depth > 6) return;
+  auto width(node->getData()->getWidth());
+  for (Board::size_type column(0); column < width; ++column) {
     Board board(node->getData());
-    board.drop((const short) column, depth % 2 == 0);
-    node->getChildren().push_back(new Tree(node, board));
+    board.drop(column);
+    node->getChildren().push_back(new Tree(node, &board));
   }
 }
 
 void Solver::evaluate(Tree *node, Board::size_type depth) {
-  node->setHeuristic(rand() % 42);
+  node->setHeuristic(node->getData()->score());
 }
 
 void Solver::propagate(Tree *node, Board::size_type depth) {
@@ -63,10 +60,10 @@ void Solver::propagate(Tree *node, Board::size_type depth) {
 }
 
 Board::size_type Solver::stochasticSelectBest(const Tree *node) {
-  std::vector<short> matches;
-  for (short column(0); column < node->getChildren().size(); ++column)
-    if (node->getChildren().at((unsigned long)column) != nullptr &&
-        node->getChildren().at((unsigned long)column)->getHeuristic() == node->getHeuristic())
+  std::vector<Board::size_type> matches;
+  for (Board::size_type column(0); column < node->getChildren().size(); ++column)
+    if (node->getChildren().at(column) != nullptr &&
+        node->getChildren().at(column)->getHeuristic() == node->getHeuristic())
       matches.push_back(column);
   return matches[rand() % matches.size()];
 }

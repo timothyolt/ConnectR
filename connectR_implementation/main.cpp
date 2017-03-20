@@ -13,7 +13,6 @@ int main(int argCount, char* args[]) {
   std::cout << "Hello ConnectR World!" << std::endl;
   srand((unsigned int) time(0));
   Board start(7, 6, 4);
-  std::cout << start << std::endl;
-  Solver solver(start, true);
+  Solver solver(&start, true);
   solver.solve();
 }

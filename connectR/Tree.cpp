@@ -1,6 +1,5 @@
 // Copyright 2017 Timothy Oltjenbruns.
 
-#include <assert.h>
 #include "Tree.hpp"
 
 using std::vector;
@@ -15,18 +14,18 @@ Tree::~Tree() {
 Tree::Tree()
     : parent(nullptr), board(), children({ }) { }
 
-Tree::Tree(Board data)
+Tree::Tree(const Board* data)
     : parent(nullptr), board(data), children({ }) { }
 
-Tree::Tree(Tree *parent, Board board)
+Tree::Tree(const Tree *parent, const Board* board)
     : parent(parent), board(board), children({ }) { }
 
-Tree::Tree(Board data, vector<Tree*> &children)
+Tree::Tree(const Board* data, const vector<Tree*> &children)
     : parent(nullptr), board(data), children(children) {
-  assert(children.size() == 0 || children.size() == data.getWidth());
+  assert(children.size() == 0 || children.size() == data->getWidth());
 }
 
-Tree::Tree(Tree *parent, Board data, vector<Tree*>& children)
+Tree::Tree(const Tree *parent, const Board& data, const vector<Tree*>& children)
     : parent(parent), board(data), children(children) {
   assert(children.size() == 0 || children.size() == data.getWidth());
 }
@@ -35,8 +34,8 @@ const Tree *Tree::getParent() const {
   return parent;
 }
 
-const Board& Tree::getData() const {
-  return board;
+const Board* Tree::getData() const {
+  return &board;
 }
 
 Tree* Tree::operator[](long index) {
@@ -55,10 +54,10 @@ vector<Tree*>& Tree::getChildren() {
   return children;
 }
 
-int Tree::getHeuristic() const {
+Board::size_type Tree::getHeuristic() const {
   return heuristic;
 }
 
-void Tree::setHeuristic(int heuristic) {
+void Tree::setHeuristic(Board::size_type heuristic) {
   Tree::heuristic = heuristic;
 }
