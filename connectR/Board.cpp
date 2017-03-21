@@ -10,21 +10,6 @@ using size_type = Board::size_type;
 using score_type = Board::score_type;
 using bitset = boost::dynamic_bitset<>;
 
-bitset::size_type Board::shiftCount(bitset::size_type shift) const {
-  size_type score(0);
-  auto copy(board[0]);
-  for (auto i(0); copy.any(); ++i) {
-    copy &= copy << shift;
-    score += copy.count() << (i * 4);
-  }
-  copy = board[1];
-  for (auto i(0); copy.any(); ++i) {
-    copy &= copy << shift;
-    score -= copy.count() << (i * 4);
-  }
-  return score;
-}
-
 Board::~Board() {
   if (columnHeight != nullptr)
     delete[] columnHeight;
@@ -91,12 +76,44 @@ void Board::undo() {
   board[count & 1] ^= move;
 }
 
-score_type Board::score() const {
+score_type Board::shiftCount(bitset::size_type shift, Board::size_type player) const {
   score_type score(0);
-  score += shiftCount(1);
-  score += shiftCount(height);
-  score += shiftCount(height + 1);
-  score += shiftCount(height + 2);
+  if (player) {
+    auto copy(board[0]);
+    for (auto i(0); copy.any(); ++i) {
+      copy &= copy << shift;
+      score += copy.count() << (i * 4);
+    }
+    copy = board[1];
+    for (auto i(0); copy.any(); ++i) {
+      copy &= copy << shift;
+      score -= copy.count() << (i * 4);
+    }
+  }
+  else {
+    auto copy(~board[0] ^ cushion);
+    for (auto i(1); copy.any(); ++i) {
+      copy &= copy << shift;
+      if (i >= connect)
+        score += copy.count() << ((i - connect) * 4);
+    }
+    copy = ~board[1] ^ cushion;
+    for (auto i(1); copy.any(); ++i) {
+      copy &= copy << shift;
+      if (i >= connect)
+        score -= copy.count() << ((i - connect) * 4);
+    }
+  }
+  return score;
+}
+
+
+score_type Board::score(Board::size_type player) const {
+  score_type score(0);
+  score += shiftCount(1, player);
+  score += shiftCount(height, player);
+  score += shiftCount(height + 1, player);
+  score += shiftCount(height + 2, player);
   //std::cout << this->toString() << score << std::endl;
   return score;
 }
@@ -111,6 +128,29 @@ size_type Board::getCount() const {
   return count;
 }
 
+std::string Board::singleToString(boost::dynamic_bitset<> board,
+                                  boost::dynamic_bitset<>::size_type width,
+                                  boost::dynamic_bitset<>::size_type height) {
+  using std::endl;
+  std::ostringstream str("");
+  str << '+';
+  for (auto column(0); column < width; ++column)
+    str << '-';
+  str << '+' << endl;
+  for (long long row((long long) height - 1); row >= 0; --row) {
+    str << '|';
+    for (auto column(row); column < (width * height); column += height) {
+      str << (board[column] ? 'X' : '~');
+    }
+    str << '|' << endl;
+  }
+  str << '+';
+  for (auto column(0); column < width; ++column)
+    str << '-';
+  str << '+' << endl;
+  return str.str();
+}
+
 std::ostream &cr::operator<<(std::ostream &os, const Board &d) {
   using std::endl;
   os << '+';
@@ -120,10 +160,8 @@ std::ostream &cr::operator<<(std::ostream &os, const Board &d) {
   for (long long row((long long) (d.height - 1)); row >= 0; --row) {
     os << '|';
     for (auto column(row); column < d.area; column += d.height + 1) {
-      auto a(d.board[0][column]);
-      auto b(d.board[1][column]);
-      os << (a ? 'X' :
-             b ? '0' : '~');
+      os << (d.board[0][column] ? 'X' :
+             d.board[1][column] ? '0' : '~');
     }
     os << '|' << endl;
   }

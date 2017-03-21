@@ -73,7 +73,7 @@ Board::size_type promptColumn(Board::size_type max) {
   Board::size_type column(0);
   while (true) {
     std::cout << "Enter a column [0..." << max << "]: ";
-    if (!(std::cin >> column)) continue;
+    if (!(std::cin >> column) || column < 0 || column > max) continue;
     return column;
   }
 }

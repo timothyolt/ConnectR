@@ -38,8 +38,8 @@ void Solver::populate(Tree *node, Board::size_type depth) {
   }
 }
 
-void Solver::evaluate(Tree *node) {
-  node->setHeuristic(node->getData()->score());
+void Solver::evaluate(Tree *node, Board::size_type player) {
+  node->setHeuristic(node->getData()->score(player));
 }
 
 void Solver::propagate(Tree *node, Board::size_type player) {
@@ -51,15 +51,15 @@ void Solver::propagate(Tree *node, Board::size_type player) {
   else
     node->setHeuristic((*std::min_element(node->getChildren().begin(), node->getChildren().end(), compare))->getHeuristic());
   // clean up unused children
-  std::replace_if(
-      node->getChildren().begin(), node->getChildren().end(),
-      [node](Tree *a) {
-        if (a->getHeuristic() == node->getHeuristic())
-          return false;
-        delete a;
-        return true;
-      },
-      nullptr);
+//  std::replace_if(
+//      node->getChildren().begin(), node->getChildren().end(),
+//      [node](Tree *a) {
+//        if (a->getHeuristic() == node->getHeuristic())
+//          return false;
+//        delete a;
+//        return true;
+//      },
+//      nullptr);
 }
 
 Board::size_type Solver::stochasticSelectBest(const Tree *node) {

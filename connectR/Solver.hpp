@@ -14,7 +14,7 @@ class Solver {
   const Board start;
   Tree* tree;
   static void populate(Tree* node, Board::size_type depth);
-  static void evaluate(Tree* node);
+  static void evaluate(Tree* node, Board::size_type player);
   static void propagate(Tree* node, Board::size_type player);
   static typename Board::size_type stochasticSelectBest(const Tree* node);
  public:

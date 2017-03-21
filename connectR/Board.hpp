@@ -18,7 +18,12 @@ class Board {
   /// \brief type of board container size
   typedef boost::dynamic_bitset<>::size_type size_type;
   typedef long score_type;
- private:
+
+private:
+  static std::string singleToString(boost::dynamic_bitset<> board,
+                                    boost::dynamic_bitset<>::size_type width,
+                                    boost::dynamic_bitset<>::size_type height);
+
   /// \brief  Board width in game spaces
   const size_type width;
   /// \brief  Board height in game spaces
@@ -37,8 +42,6 @@ class Board {
   size_type count;
   size_type* columnHeight;
   size_type* history;
-
-  boost::dynamic_bitset<>::size_type shiftCount(boost::dynamic_bitset<>::size_type shift) const;
 
  public:
   ~Board();
@@ -65,7 +68,11 @@ class Board {
 
   void undo();
 
-  score_type score() const;
+ private:
+  score_type shiftCount(size_type shift, size_type player) const;
+
+ public:
+  score_type score(Board::size_type player) const;
 
   std::string toString() const;
 

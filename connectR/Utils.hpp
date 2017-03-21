@@ -51,8 +51,8 @@ const TTree* searchDf(const TTree *root, Functional evaluate) {
   return nullptr;
 }
 
-template <typename TTree, typename NodeDepthAction, typename NodeAction, typename NodePlayerAction>
-void miniMax(TTree *root, NodeDepthAction populate, NodeAction evaluate, NodePlayerAction propagate) {
+template <typename TTree, typename NodeDepthAction, typename NodePlayerAction>
+void miniMax(TTree *root, NodeDepthAction populate, NodePlayerAction evaluate, NodePlayerAction propagate) {
   auto startPlayer(root->getData()->getCount() & 1);
   std::stack<Helpers::TreeNodeIndex<TTree>> stack;
   stack.emplace(root, 0);
@@ -67,7 +67,7 @@ void miniMax(TTree *root, NodeDepthAction populate, NodeAction evaluate, NodePla
     }
     else {
       if (cursor->getChildren().size() == 0)
-        evaluate(cursor);
+        evaluate(cursor, (stack.size() & 1) ^ startPlayer);
       else
         propagate(cursor, (stack.size() & 1) ^ startPlayer);
       stack.pop();
