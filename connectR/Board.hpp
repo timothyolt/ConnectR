@@ -71,7 +71,7 @@ private:
   bool isLegal();
 
  private:
-  score_type shiftCount(size_type shift, size_type player) const;
+  inline score_type shiftCount(size_type shift, size_type player) const;
 
  public:
   score_type score(Board::size_type player) const;

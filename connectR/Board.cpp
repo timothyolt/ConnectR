@@ -77,7 +77,7 @@ void Board::undo() {
   board[count & 1] ^= move;
 }
 
-score_type Board::shiftCount(bitset::size_type shift, Board::size_type player) const {
+inline score_type Board::shiftCount(bitset::size_type shift, Board::size_type player) const {
   score_type score(0);
   auto playerWeightX(player ^ 1);
   auto playerWeight0(player);

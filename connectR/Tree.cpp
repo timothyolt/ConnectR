@@ -16,10 +16,16 @@ Tree::Tree()
     : parent(nullptr), board(), size(0), children(nullptr) { }
 
 Tree::Tree(const Board* board)
-    : parent(nullptr), board(board), size(board->getWidth()), children(new Tree*[size]) { }
+    : parent(nullptr), board(board), size(board->getWidth()), children(new Tree*[size]) {
+  for (auto child(0); child < size; ++child)
+    children[child] = nullptr;
+}
 
 Tree::Tree(const Tree *parent, const Board* board)
-    : parent(parent), board(board), size(board->getWidth()), children(new Tree*[size]) { }
+    : parent(parent), board(board), size(board->getWidth()), children(new Tree*[size]) {
+  for (auto child(0); child < size; ++child)
+    children[child] = nullptr;
+}
 
 const Tree *Tree::getParent() const {
   return parent;
@@ -58,7 +64,7 @@ Tree *const * Tree::end() const {
 }
 
 const bool Tree::empty() const {
-  return std::all_of(begin(), end(), [](auto &c){ return c == nullptr; });
+  return std::all_of(begin(), end(), [](Tree *const & c){ return c == nullptr; });
 }
 
 Board::score_type Tree::getHeuristic() const {

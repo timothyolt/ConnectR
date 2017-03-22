@@ -29,7 +29,7 @@ Board::size_type Solver::solve() {
 }
 
 void Solver::populate(Tree *node, Board::size_type depth) {
-  if (depth > 6) return;
+  if (node == nullptr || depth > 6) return;
   auto width(node->getData()->getWidth());
   for (Board::size_type column(0); column < width; ++column) {
     Board board(node->getData());
@@ -43,24 +43,30 @@ void Solver::evaluate(Tree *node, Board::size_type player) {
 }
 
 void Solver::propagate(Tree *node, Board::size_type player) {
-  node->setHeuristic(
-      (*std::min_element(
-          node->begin(), node->end(), player
-              ? ([](Tree *&a, Tree *&b) {
-                  if (a == nullptr)
-                    return false;
-                  if (b == nullptr)
-                    return true;
-                  return a->getHeuristic() < b->getHeuristic();
-                })
-              : ([](Tree *&a, Tree *&b) {
-                  if (a == nullptr)
-                    return true;
-                  if (b == nullptr)
-                    return false;
-                  return a->getHeuristic() > b->getHeuristic();
-                })))
-          ->getHeuristic());
+  if (player) {
+    node->setHeuristic(
+        (*std::min_element(
+            node->begin(), node->end(), [](Tree *&a, Tree *&b) {
+              if (a == nullptr)
+                return false;
+              if (b == nullptr)
+                return true;
+              return a->getHeuristic() < b->getHeuristic();
+            }))
+            ->getHeuristic());
+  }
+  else {
+    node->setHeuristic(
+        (*std::max_element(
+            node->begin(), node->end(), [](Tree *&a, Tree *&b) {
+              if (a == nullptr)
+                return true;
+              if (b == nullptr)
+                return false;
+              return a->getHeuristic() < b->getHeuristic();
+            }))
+            ->getHeuristic());
+  }
   // clean up unused children
 //  std::replace_if(
 //      node->getChildren().begin(), node->getChildren().end(),
