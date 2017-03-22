@@ -60,13 +60,15 @@ void miniMax(TTree *root, NodeDepthAction populate, NodePlayerAction evaluate, N
   while (!stack.empty()) {
     auto cursor(stack.top().pointer);
     auto index(stack.top().index);
-    if (index < cursor->getChildren().size()) {
-      auto child(cursor->operator[](stack.top().index++));
+    if (cursor == nullptr)
+      stack.pop();
+    else if (index < cursor->size) {
+      auto child((*cursor)[stack.top().index++]);
       stack.emplace(child, 0);
       populate(child, stack.size()); // populate next generation
     }
     else {
-      if (cursor->getChildren().size() == 0)
+      if (cursor->empty())
         evaluate(cursor, (stack.size() & 1) ^ startPlayer);
       else
         propagate(cursor, (stack.size() & 1) ^ startPlayer);

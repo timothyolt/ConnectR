@@ -41,7 +41,7 @@ play_mode promptPlayMode() {
     switch (mode[0]) {
       case 'p': return player;
       case 'c': return computer;
-      case 'x': return exitProgram;
+      case 'e': return exitProgram;
       default:
         std::cout << "Unknown mode \"" << mode << "\"" << std::endl;
         break;

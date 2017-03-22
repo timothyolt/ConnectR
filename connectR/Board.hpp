@@ -68,6 +68,8 @@ private:
 
   void undo();
 
+  bool isLegal();
+
  private:
   score_type shiftCount(size_type shift, size_type player) const;
 

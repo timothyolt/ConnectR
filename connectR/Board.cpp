@@ -60,49 +60,40 @@ static bool access(bitset* from, unsigned long i) {
 
 void Board::drop(const size_type column) {
   bitset move(area);
-  move[columnHeight[column]] = true;
-  // prevent column overflow
-  if ((move & cushion).any()) return;
+  move.set(columnHeight[column]);
+  // allow placement in the cushion for detection?
+  // prevent column overflow... maybe not?
+  // if ((move & cushion).any()) return;
   board[count & 1] |= move;
+  // TODO: I will crash later on with this...
   history[count++] = column;
   columnHeight[column] += 1;
   return;
 }
 
 void Board::undo() {
-  auto column(--columnHeight[--count]);
   bitset move(area, 1);
-  move <<= columnHeight[column];
+  move <<= --columnHeight[--count];
   board[count & 1] ^= move;
 }
 
 score_type Board::shiftCount(bitset::size_type shift, Board::size_type player) const {
   score_type score(0);
-  if (player) {
-    auto copy(board[0]);
-    for (auto i(0); copy.any(); ++i) {
-      copy &= copy << shift;
-      score += copy.count() << (i * 4);
-    }
-    copy = board[1];
-    for (auto i(0); copy.any(); ++i) {
-      copy &= copy << shift;
-      score -= copy.count() << (i * 4);
-    }
+  auto playerWeightX(player ^ 1);
+  auto playerWeight0(player);
+  // X Potential
+  auto copy(~board[0] ^ cushion);
+  for (auto i(1); copy.any(); ++i) {
+    copy &= copy << shift;
+    if (i >= connect)
+      score += copy.count() << ((i - connect + playerWeightX) * 4);
   }
-  else {
-    auto copy(~board[0] ^ cushion);
-    for (auto i(1); copy.any(); ++i) {
-      copy &= copy << shift;
-      if (i >= connect)
-        score += copy.count() << ((i - connect) * 4);
-    }
-    copy = ~board[1] ^ cushion;
-    for (auto i(1); copy.any(); ++i) {
-      copy &= copy << shift;
-      if (i >= connect)
-        score -= copy.count() << ((i - connect) * 4);
-    }
+  // O Potential
+  copy = ~board[1] ^ cushion;
+  for (auto i(1); copy.any(); ++i) {
+    copy &= copy << shift;
+    if (i >= connect)
+      score -= copy.count() << ((i - connect + playerWeight0) * 4);
   }
   return score;
 }
@@ -110,6 +101,8 @@ score_type Board::shiftCount(bitset::size_type shift, Board::size_type player) c
 
 score_type Board::score(Board::size_type player) const {
   score_type score(0);
+  //if (((board[0] | board[1]) & cushion).any())
+  //  return player ? std::numeric_limits<score_type>::min() : std::numeric_limits<Board::score_type>::max();
   score += shiftCount(1, player);
   score += shiftCount(height, player);
   score += shiftCount(height + 1, player);
@@ -149,6 +142,10 @@ std::string Board::singleToString(boost::dynamic_bitset<> board,
     str << '-';
   str << '+' << endl;
   return str.str();
+}
+
+bool Board::isLegal() {
+  return ((board[0] | board[1]) & cushion).none();
 }
 
 std::ostream &cr::operator<<(std::ostream &os, const Board &d) {

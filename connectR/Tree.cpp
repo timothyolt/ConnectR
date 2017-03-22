@@ -7,28 +7,19 @@ using cr::Board;
 using cr::Tree;
 
 Tree::~Tree() {
-  for (auto c(0); c < children.size(); ++c)
+  for (auto c(0); c < size; ++c)
     delete children[c];
+  delete[] children;
 }
 
 Tree::Tree()
-    : parent(nullptr), board(), children({ }) { }
+    : parent(nullptr), board(), size(0), children(nullptr) { }
 
-Tree::Tree(const Board* data)
-    : parent(nullptr), board(data), children({ }) { }
+Tree::Tree(const Board* board)
+    : parent(nullptr), board(board), size(board->getWidth()), children(new Tree*[size]) { }
 
 Tree::Tree(const Tree *parent, const Board* board)
-    : parent(parent), board(board), children({ }) { }
-
-Tree::Tree(const Board* data, const vector<Tree*> &children)
-    : parent(nullptr), board(data), children(children) {
-  assert(children.size() == 0 || children.size() == data->getWidth());
-}
-
-Tree::Tree(const Tree *parent, const Board& data, const vector<Tree*>& children)
-    : parent(parent), board(data), children(children) {
-  assert(children.size() == 0 || children.size() == data.getWidth());
-}
+    : parent(parent), board(board), size(board->getWidth()), children(new Tree*[size]) { }
 
 const Tree *Tree::getParent() const {
   return parent;
@@ -38,20 +29,36 @@ const Board* Tree::getData() const {
   return &board;
 }
 
-Tree* Tree::operator[](long index) {
+void Tree::set(Board::size_type index, Tree* child) {
+  children[index] = child;
+}
+
+Tree* Tree::operator[](Board::size_type index) {
   return children[index];
 }
 
-const Tree* Tree::operator[](long index) const {
+const Tree* Tree::operator[](Board::size_type index) const {
   return children[index];
 }
 
-const vector<Tree*>& Tree::getChildren() const {
+Tree **Tree::begin() {
   return children;
 }
 
-vector<Tree*>& Tree::getChildren() {
+Tree **Tree::end() {
+  return children + size;
+}
+
+Tree *const * Tree::begin() const {
   return children;
+}
+
+Tree *const * Tree::end() const {
+  return children + size;
+}
+
+const bool Tree::empty() const {
+  return std::all_of(begin(), end(), [](auto &c){ return c == nullptr; });
 }
 
 Board::score_type Tree::getHeuristic() const {

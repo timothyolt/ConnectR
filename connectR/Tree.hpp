@@ -11,34 +11,42 @@ class Tree {
  private:
   const Tree* parent;
   const Board board;
-  std::vector<Tree*> children;
+
+ public:
+  const Board::size_type size;
+
+ private:
+  Tree** children;
   Board::score_type heuristic;
 
  public:
-
   ~Tree();
 
   Tree();
 
-  explicit Tree(const Board* data);
+  explicit Tree(const Board* board);
 
   Tree(const Tree* parent, const Board* board);
-
-  Tree(const Board* data, const std::vector<Tree*> &children);
-
-  Tree(const Tree* parent, const Board& data, const std::vector<Tree*>& children);
 
   const Tree *getParent() const;
 
   const Board* getData() const;
 
-  Tree* operator[](long index);
+  void set(Board::size_type index, Tree* child);
 
-  const Tree* operator[](long index) const;
+  Tree* operator[](Board::size_type index);
 
-  const std::vector<Tree*>& getChildren() const;
+  const Tree* operator[](Board::size_type index) const;
 
-  std::vector<Tree*>& getChildren();
+  Tree** begin();
+
+  Tree** end();
+
+  Tree *const * begin() const;
+
+  Tree *const * end() const;
+
+  const bool empty() const;
 
   Board::score_type getHeuristic() const;
 

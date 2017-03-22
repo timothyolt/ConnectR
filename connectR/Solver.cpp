@@ -20,10 +20,10 @@ Board::size_type Solver::solve() {
   // store a best value
   auto best(stochasticSelectBest(tree));
   // print an ideal target
-  const Tree* node(tree->getChildren().at(best));
-  while (node->getChildren().size() != 0)
-    node = node->getChildren().at(stochasticSelectBest(node));
-  std::cout << "Ideal board with value " << best << ": " << std::endl << *node->getData() << std::endl;
+  const Tree* node((*tree)[best]);
+  while (!node->empty())
+    node = (*node)[stochasticSelectBest(node)];
+  std::cout << "Ideal board with slot " << best << ": " << std::endl << *node->getData() << std::endl;
   // return previous selected best
   return best;
 }
@@ -34,7 +34,7 @@ void Solver::populate(Tree *node, Board::size_type depth) {
   for (Board::size_type column(0); column < width; ++column) {
     Board board(node->getData());
     board.drop(column);
-    node->getChildren().push_back(new Tree(node, &board));
+    node->set(column, board.isLegal() ? new Tree(node, &board) : nullptr);
   }
 }
 
@@ -43,13 +43,24 @@ void Solver::evaluate(Tree *node, Board::size_type player) {
 }
 
 void Solver::propagate(Tree *node, Board::size_type player) {
-  auto compare = [](auto &a, auto &b){
-    return a->getHeuristic() < b->getHeuristic();
-  };
-  if (player == 0)
-    node->setHeuristic((*std::max_element(node->getChildren().begin(), node->getChildren().end(), compare))->getHeuristic());
-  else
-    node->setHeuristic((*std::min_element(node->getChildren().begin(), node->getChildren().end(), compare))->getHeuristic());
+  node->setHeuristic(
+      (*std::min_element(
+          node->begin(), node->end(), player
+              ? ([](Tree *&a, Tree *&b) {
+                  if (a == nullptr)
+                    return false;
+                  if (b == nullptr)
+                    return true;
+                  return a->getHeuristic() < b->getHeuristic();
+                })
+              : ([](Tree *&a, Tree *&b) {
+                  if (a == nullptr)
+                    return true;
+                  if (b == nullptr)
+                    return false;
+                  return a->getHeuristic() > b->getHeuristic();
+                })))
+          ->getHeuristic());
   // clean up unused children
 //  std::replace_if(
 //      node->getChildren().begin(), node->getChildren().end(),
@@ -64,9 +75,9 @@ void Solver::propagate(Tree *node, Board::size_type player) {
 
 Board::size_type Solver::stochasticSelectBest(const Tree *node) {
   std::vector<Board::size_type> matches;
-  for (Board::size_type column(0); column < node->getChildren().size(); ++column)
-    if (node->getChildren().at(column) != nullptr &&
-        node->getChildren().at(column)->getHeuristic() == node->getHeuristic())
+  for (Board::size_type column(0); column < node->size; ++column)
+    if ((*node)[column] != nullptr &&
+        (*node)[column]->getHeuristic() == node->getHeuristic())
       matches.push_back(column);
   return matches[rand() % matches.size()];
 }
