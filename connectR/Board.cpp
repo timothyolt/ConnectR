@@ -78,23 +78,41 @@ void Board::undo() {
 }
 
 inline score_type Board::shiftCount(bitset::size_type shift, Board::size_type player) const {
-  score_type score(0);
-  auto playerWeightX(player ^ 1);
-  auto playerWeight0(player);
-  // X Potential
-  auto copy(~board[0] ^ cushion);
-  for (auto i(1); copy.any(); ++i) {
+  auto playerWeightX(player ? 0 : 1);
+  auto playerWeight0(player ? 1 : 0);
+  // X Actual
+  auto copy(board[0]);
+  score_type xActual(0);
+  for (auto i(2); copy.any(); ++i) {
     copy &= copy << shift;
     if (i >= connect)
-      score += copy.count() << ((i - connect + playerWeightX) * 4);
+      xActual -= copy.count();  // << i - connect;
+  }
+  // O Actual
+  score_type oActual(0);
+  copy = board[1];
+  for (auto i(2); copy.any(); ++i) {
+    copy &= copy << shift;
+    if (i >= connect)
+      oActual += copy.count(); // << i - connect;
+  }
+  // X Potential
+  copy = ~board[0] ^ cushion;
+  score_type xPotential(0);
+  for (auto i(2); copy.any(); ++i) {
+    copy &= copy << shift;
+    if (i >= connect)
+      xPotential += copy.count();  // << i - connect;
   }
   // O Potential
   copy = ~board[1] ^ cushion;
-  for (auto i(1); copy.any(); ++i) {
+  score_type oPotential(0);
+  for (auto i(2); copy.any(); ++i) {
     copy &= copy << shift;
     if (i >= connect)
-      score -= copy.count() << ((i - connect + playerWeight0) * 4);
+      oPotential -= copy.count(); // << i - connect;
   }
+  score_type score((xActual + oActual) * 1000 + xPotential + oActual);
   return score;
 }
 
