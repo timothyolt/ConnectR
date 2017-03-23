@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <boost/dynamic_bitset.hpp>
 #include <iostream>
+#include "Board.hpp"
 
 namespace cr {
 namespace Helpers {
@@ -51,24 +52,28 @@ const TTree* searchDf(const TTree *root, Functional evaluate) {
   return nullptr;
 }
 
-template <typename TTree, typename Action>
-void miniMax(TTree *root, Action populate, Action evaluate, Action propagate) {
+template <typename TTree, typename NodeDepthAction, typename NodePlayerAction>
+void miniMax(TTree *root, Board::size_type maxDepth, NodeDepthAction populate, NodePlayerAction evaluate, NodePlayerAction propagate) {
+  auto startPlayer(root->getData()->getCount() & 1);
   std::stack<Helpers::TreeNodeIndex<TTree>> stack;
   stack.emplace(root, 0);
   populate(root, stack.size());
   while (!stack.empty()) {
     auto cursor(stack.top().pointer);
     auto index(stack.top().index);
-    if (index < cursor->getChildren().size()) {
-      auto child(cursor->operator[](stack.top().index++));
+    if (cursor == nullptr)
+      stack.pop();
+    else if (index < cursor->size) {
+      auto child((*cursor)[stack.top().index++]);
       stack.emplace(child, 0);
-      populate(child, stack.size()); // populate next generation
+      if (child != nullptr && stack.size() <= maxDepth)
+        populate(child, stack.size()); // populate next generation
     }
     else {
-      if (cursor->getChildren().size() == 0)
-        evaluate(cursor, stack.size());
+      if (cursor->empty())
+        evaluate(cursor, (stack.size() & 1) ^ startPlayer);
       else
-        propagate(cursor, stack.size());
+        propagate(cursor, (stack.size() & 1) ^ startPlayer);
       stack.pop();
     }
   }

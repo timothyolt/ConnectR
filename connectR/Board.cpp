@@ -10,21 +10,6 @@ using size_type = Board::size_type;
 using score_type = Board::score_type;
 using bitset = boost::dynamic_bitset<>;
 
-bitset::size_type Board::shiftCount(bitset::size_type shift) const {
-  size_type score(0);
-  auto copy(board[0]);
-  for (auto i(0); copy.any(); ++i) {
-    copy &= copy << shift;
-    score += copy.count() << (i * 4);
-  }
-  copy = board[1];
-  for (auto i(0); copy.any(); ++i) {
-    copy &= copy << shift;
-    score -= copy.count() << (i * 4);
-  }
-  return score;
-}
-
 Board::~Board() {
   if (columnHeight != nullptr)
     delete[] columnHeight;
@@ -75,28 +60,73 @@ static bool access(bitset* from, unsigned long i) {
 
 void Board::drop(const size_type column) {
   bitset move(area);
-  move[columnHeight[column]] = true;
-  // prevent column overflow
-  if ((move & cushion).any()) return;
+  move.set(columnHeight[column]);
+  // allow placement in the cushion for detection?
+  // prevent column overflow... maybe not?
+  // if ((move & cushion).any()) return;
   board[count & 1] |= move;
+  // TODO: I will crash later on with this...
   history[count++] = column;
   columnHeight[column] += 1;
   return;
 }
 
 void Board::undo() {
-  auto column(--columnHeight[--count]);
   bitset move(area, 1);
-  move <<= columnHeight[column];
+  move <<= --columnHeight[--count];
   board[count & 1] ^= move;
 }
 
-score_type Board::score() const {
+inline score_type Board::shiftCount(bitset::size_type shift, Board::size_type player) const {
+  // X Actual
+  auto copy(board[0]);
+  score_type xActual(0);
+  for (auto i(2); copy.any(); ++i) {
+    copy &= copy << shift;
+    if (i >= connect)
+      xActual += copy.count();
+  }
+  // O Actual
+  score_type oActual(0);
+  copy = board[1];
+  for (auto i(2); copy.any(); ++i) {
+    copy &= copy << shift;
+    if (i >= connect)
+      oActual -= copy.count();
+  }
+  // X Potential
+  copy = ~board[1] ^ cushion;
+  score_type xPotential(0);
+  for (auto i(2); copy.any(); ++i) {
+    copy &= copy << shift;
+    if (i >= connect)
+      xPotential -= copy.count();
+  }
+  // O Potential
+  copy = ~board[0] ^ cushion;
+  score_type oPotential(0);
+  for (auto i(2); copy.any(); ++i) {
+    copy &= copy << shift;
+    if (i >= connect)
+      oPotential += copy.count();
+  }
   score_type score(0);
-  score += shiftCount(1);
-  score += shiftCount(height);
-  score += shiftCount(height + 1);
-  score += shiftCount(height + 2);
+  if (player)
+    score = (xActual * 2000) + (oActual * 1000) + (xPotential * 2) + (oPotential * 1);
+  else
+    score = (xActual * 1000) + (oActual * 2000) + (xPotential * 1) + (oPotential * 2);
+  return score;
+}
+
+
+score_type Board::score(Board::size_type player) const {
+  score_type score(0);
+  //if (((board[0] | board[1]) & cushion).any())
+  //  return player ? std::numeric_limits<score_type>::min() : std::numeric_limits<Board::score_type>::max();
+  score += shiftCount(1, player);
+  score += shiftCount(height, player);
+  score += shiftCount(height + 1, player);
+  score += shiftCount(height + 2, player);
   //std::cout << this->toString() << score << std::endl;
   return score;
 }
@@ -105,6 +135,38 @@ std::string Board::toString() const {
   std::stringstream stream;
   stream << *this;
   return stream.str();
+}
+
+size_type Board::getCount() const {
+  return count;
+}
+
+std::string Board::singleToString(boost::dynamic_bitset<> board,
+                                  boost::dynamic_bitset<>::size_type width,
+                                  boost::dynamic_bitset<>::size_type height) {
+  using std::endl;
+  std::ostringstream str("");
+  str << '+';
+  for (auto column(0); column < width; ++column)
+    str << '-';
+  str << '+' << endl;
+  for (long long row((long long) height - 1); row >= 0; --row) {
+    str << '|';
+    for (auto column(row); column < (width * height); column += height) {
+      str << (board[column] ? 'X' : '~');
+    }
+    str << '|' << endl;
+  }
+  str << '+';
+  for (auto column(0); column < width; ++column)
+    str << '-';
+  str << '+' << endl;
+  return str.str();
+}
+
+bool Board::isLegal() {
+  bitset taken(board[0] | board[1]);
+  return taken.none() || (taken & cushion).none();
 }
 
 std::ostream &cr::operator<<(std::ostream &os, const Board &d) {
@@ -116,10 +178,8 @@ std::ostream &cr::operator<<(std::ostream &os, const Board &d) {
   for (long long row((long long) (d.height - 1)); row >= 0; --row) {
     os << '|';
     for (auto column(row); column < d.area; column += d.height + 1) {
-      auto a(d.board[0][column]);
-      auto b(d.board[1][column]);
-      os << (a ? 'X' :
-             b ? '0' : '~');
+      os << (d.board[0][column] ? 'X' :
+             d.board[1][column] ? '0' : '~');
     }
     os << '|' << endl;
   }

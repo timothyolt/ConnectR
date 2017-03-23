@@ -12,15 +12,15 @@ class Solver {
  public:
  private:
   const Board start;
+  const Board::size_type maxDepth;
   Tree* tree;
-  bool player;
   static void populate(Tree* node, Board::size_type depth);
-  static void evaluate(Tree* node, Board::size_type depth);
-  static void propagate(Tree* node, Board::size_type depth);
+  static void evaluate(Tree* node, Board::size_type player);
+  static void propagate(Tree* node, Board::size_type player);
   static typename Board::size_type stochasticSelectBest(const Tree* node);
  public:
   ~Solver();
-  Solver(Board* start, bool player);
+  Solver(Board* start, Board::size_type maxDepth);
   typename Board::size_type solve();
 };
 

@@ -7,27 +7,24 @@ using cr::Board;
 using cr::Tree;
 
 Tree::~Tree() {
-  for (auto c(0); c < children.size(); ++c)
+  for (auto c(0); c < size; ++c)
     delete children[c];
+  delete[] children;
 }
 
 Tree::Tree()
-    : parent(nullptr), board(), children({ }) { }
+    : parent(nullptr), board(), size(0), children(nullptr) { }
 
-Tree::Tree(const Board* data)
-    : parent(nullptr), board(data), children({ }) { }
-
-Tree::Tree(const Tree *parent, const Board* board)
-    : parent(parent), board(board), children({ }) { }
-
-Tree::Tree(const Board* data, const vector<Tree*> &children)
-    : parent(nullptr), board(data), children(children) {
-  assert(children.size() == 0 || children.size() == data->getWidth());
+Tree::Tree(const Board* board)
+    : parent(nullptr), board(board), size(board->getWidth()), children(new Tree*[size]) {
+  for (auto child(0); child < size; ++child)
+    children[child] = nullptr;
 }
 
-Tree::Tree(const Tree *parent, const Board& data, const vector<Tree*>& children)
-    : parent(parent), board(data), children(children) {
-  assert(children.size() == 0 || children.size() == data.getWidth());
+Tree::Tree(const Tree *parent, const Board* board)
+    : parent(parent), board(board), size(board->getWidth()), children(new Tree*[size]) {
+  for (auto child(0); child < size; ++child)
+    children[child] = nullptr;
 }
 
 const Tree *Tree::getParent() const {
@@ -38,26 +35,42 @@ const Board* Tree::getData() const {
   return &board;
 }
 
-Tree* Tree::operator[](long index) {
+void Tree::set(Board::size_type index, Tree* child) {
+  children[index] = child;
+}
+
+Tree* Tree::operator[](Board::size_type index) {
   return children[index];
 }
 
-const Tree* Tree::operator[](long index) const {
+const Tree* Tree::operator[](Board::size_type index) const {
   return children[index];
 }
 
-const vector<Tree*>& Tree::getChildren() const {
+Tree **Tree::begin() {
   return children;
 }
 
-vector<Tree*>& Tree::getChildren() {
+Tree **Tree::end() {
+  return children + size;
+}
+
+Tree *const * Tree::begin() const {
   return children;
 }
 
-Board::size_type Tree::getHeuristic() const {
+Tree *const * Tree::end() const {
+  return children + size;
+}
+
+const bool Tree::empty() const {
+  return std::all_of(begin(), end(), [](Tree *const & c){ return c == nullptr; });
+}
+
+Board::score_type Tree::getHeuristic() const {
   return heuristic;
 }
 
-void Tree::setHeuristic(Board::size_type heuristic) {
+void Tree::setHeuristic(Board::score_type heuristic) {
   Tree::heuristic = heuristic;
 }
