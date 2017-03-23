@@ -69,9 +69,9 @@ void miniMax(TTree *root, NodeDepthAction populate, NodePlayerAction evaluate, N
     }
     else {
       if (cursor->empty())
-        evaluate(cursor, (stack.size() & 1) ^ startPlayer);
+        evaluate(cursor, (stack.size() & 1) == startPlayer);
       else
-        propagate(cursor, (stack.size() & 1) ^ startPlayer);
+        propagate(cursor, (stack.size() & 1) == startPlayer);
       stack.pop();
     }
   }

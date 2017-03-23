@@ -114,7 +114,7 @@ inline score_type Board::shiftCount(bitset::size_type shift, Board::size_type pl
   if (player)
     score = (xActual * 2000) + (oActual * 1000) + (xPotential * 2) + (oActual * 1);
   else
-    score = (xActual * -1000) + (oActual * -2000) + (xPotential * -1) + (oActual * -2);
+    score = (xActual * 1000) + (oActual * 2000) + (xPotential * 1) + (oActual * 2);
   return score;
 }
 

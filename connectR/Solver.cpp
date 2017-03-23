@@ -12,8 +12,8 @@ Solver::~Solver() {
   delete tree;
 }
 
-Solver::Solver(Board* start)
-    : start(start), tree(new Tree(start)) { }
+Solver::Solver(Board* start, Board::size_type maxDepth)
+    : start(start), maxDepth(maxDepth), tree(new Tree(start)) { }
 
 Board::size_type Solver::solve() {
   miniMax(tree, populate, evaluate, propagate);
@@ -29,7 +29,7 @@ Board::size_type Solver::solve() {
 }
 
 void Solver::populate(Tree *node, Board::size_type depth) {
-  if (node == nullptr || depth > 6) return;
+  if (node == nullptr || depth > depth) return;
   auto width(node->getData()->getWidth());
   for (Board::size_type column(0); column < width; ++column) {
     Board board(node->getData());
