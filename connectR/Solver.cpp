@@ -16,7 +16,7 @@ Solver::Solver(Board* start, Board::size_type maxDepth)
     : start(start), maxDepth(maxDepth), tree(new Tree(start)) { }
 
 Board::size_type Solver::solve() {
-  miniMax(tree, populate, evaluate, propagate);
+  miniMax(tree, maxDepth, populate, evaluate, propagate);
   // store a best value
   auto best(stochasticSelectBest(tree));
   // print an ideal target
@@ -29,7 +29,6 @@ Board::size_type Solver::solve() {
 }
 
 void Solver::populate(Tree *node, Board::size_type depth) {
-  if (node == nullptr || depth > depth) return;
   auto width(node->getData()->getWidth());
   for (Board::size_type column(0); column < width; ++column) {
     Board board(node->getData());

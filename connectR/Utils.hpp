@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <boost/dynamic_bitset.hpp>
 #include <iostream>
+#include "Board.hpp"
 
 namespace cr {
 namespace Helpers {
@@ -52,7 +53,7 @@ const TTree* searchDf(const TTree *root, Functional evaluate) {
 }
 
 template <typename TTree, typename NodeDepthAction, typename NodePlayerAction>
-void miniMax(TTree *root, NodeDepthAction populate, NodePlayerAction evaluate, NodePlayerAction propagate) {
+void miniMax(TTree *root, Board::size_type maxDepth, NodeDepthAction populate, NodePlayerAction evaluate, NodePlayerAction propagate) {
   auto startPlayer(root->getData()->getCount() & 1);
   std::stack<Helpers::TreeNodeIndex<TTree>> stack;
   stack.emplace(root, 0);
@@ -65,13 +66,14 @@ void miniMax(TTree *root, NodeDepthAction populate, NodePlayerAction evaluate, N
     else if (index < cursor->size) {
       auto child((*cursor)[stack.top().index++]);
       stack.emplace(child, 0);
-      populate(child, stack.size()); // populate next generation
+      if (child != nullptr && stack.size() <= maxDepth)
+        populate(child, stack.size()); // populate next generation
     }
     else {
       if (cursor->empty())
-        evaluate(cursor, (stack.size() & 1) == startPlayer);
+        evaluate(cursor, (stack.size() & 1) ^ startPlayer);
       else
-        propagate(cursor, (stack.size() & 1) == startPlayer);
+        propagate(cursor, (stack.size() & 1) ^ startPlayer);
       stack.pop();
     }
   }
