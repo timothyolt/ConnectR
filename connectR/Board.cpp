@@ -84,7 +84,7 @@ inline score_type Board::shiftCount(bitset::size_type shift, Board::size_type pl
   for (auto i(2); copy.any(); ++i) {
     copy &= copy << shift;
     if (i >= connect)
-      xActual += copy.count();
+      xActual -= copy.count();
   }
   // O Actual
   score_type oActual(0);
@@ -92,7 +92,7 @@ inline score_type Board::shiftCount(bitset::size_type shift, Board::size_type pl
   for (auto i(2); copy.any(); ++i) {
     copy &= copy << shift;
     if (i >= connect)
-      oActual -= copy.count();
+      oActual += copy.count();
   }
   // X Potential
   copy = ~board[1] ^ cushion;
