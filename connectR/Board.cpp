@@ -78,15 +78,13 @@ void Board::undo() {
 }
 
 inline score_type Board::shiftCount(bitset::size_type shift, Board::size_type player) const {
-  auto playerWeightX(player ? 0 : 1);
-  auto playerWeight0(player ? 1 : 0);
   // X Actual
   auto copy(board[0]);
   score_type xActual(0);
   for (auto i(2); copy.any(); ++i) {
     copy &= copy << shift;
     if (i >= connect)
-      xActual -= copy.count();  // << i - connect;
+      xActual += copy.count();
   }
   // O Actual
   score_type oActual(0);
@@ -94,25 +92,29 @@ inline score_type Board::shiftCount(bitset::size_type shift, Board::size_type pl
   for (auto i(2); copy.any(); ++i) {
     copy &= copy << shift;
     if (i >= connect)
-      oActual += copy.count(); // << i - connect;
+      oActual -= copy.count();
   }
   // X Potential
-  copy = ~board[0] ^ cushion;
+  copy = ~board[1] ^ cushion;
   score_type xPotential(0);
   for (auto i(2); copy.any(); ++i) {
     copy &= copy << shift;
     if (i >= connect)
-      xPotential += copy.count();  // << i - connect;
+      xPotential -= copy.count();
   }
   // O Potential
-  copy = ~board[1] ^ cushion;
+  copy = ~board[0] ^ cushion;
   score_type oPotential(0);
   for (auto i(2); copy.any(); ++i) {
     copy &= copy << shift;
     if (i >= connect)
-      oPotential -= copy.count(); // << i - connect;
+      oPotential += copy.count();
   }
-  score_type score((xActual + oActual) * 1000 + xPotential + oActual);
+  score_type score(0);
+  if (player)
+    score = (xActual * 2000) + (oActual * 1000) + (xPotential * 2) + (oActual * 1);
+  else
+    score = (xActual * -1000) + (oActual * -2000) + (xPotential * -1) + (oActual * -2);
   return score;
 }
 
@@ -163,7 +165,8 @@ std::string Board::singleToString(boost::dynamic_bitset<> board,
 }
 
 bool Board::isLegal() {
-  return ((board[0] | board[1]) & cushion).none();
+  bitset taken(board[0] | board[1]);
+  return taken.none() || (taken & cushion).none();
 }
 
 std::ostream &cr::operator<<(std::ostream &os, const Board &d) {
